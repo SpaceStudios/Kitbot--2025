@@ -4,14 +4,36 @@
 
 package frc.robot.subsystems.tower;
 
+import org.littletonrobotics.junction.Logger;
+
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.RobotConstants;
+import frc.robot.subsystems.tower.IO.TowerIO_REAL;
+import frc.robot.subsystems.tower.IO.TowerIO_SIM;
 
 public class Tower extends SubsystemBase {
   /** Creates a new Tower. */
-  public Tower() {}
+  TowerDataAutoLogged data;
+  TowerIO io;
+  public Tower() {
+    switch (RobotConstants.currentStatus) {
+      case REAL:
+        io = new TowerIO_REAL();
+        break;
+      case SIM:
+        io = new TowerIO_SIM();
+        break;
+    }
+    data = new TowerDataAutoLogged();
+  }
+
+  public void setVolts(double volts) {
+    io.setVolts(volts);
+  }
 
   @Override
   public void periodic() {
-    // This method will be called once per scheduler run
+    io.updateInputs(data);
+    Logger.processInputs("Tower", data);
   }
 }
