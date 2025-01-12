@@ -35,5 +35,6 @@ public class Constants {
         public static final int DriveRL = 3;
         public static final int DriveFR = 2;
         public static final int DriveRR = 4;
+        public static final int Tower = 11;
     }
 }
