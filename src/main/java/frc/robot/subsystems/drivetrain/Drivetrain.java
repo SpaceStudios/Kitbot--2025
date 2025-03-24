@@ -10,28 +10,47 @@ import org.littletonrobotics.junction.Logger;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive;
+import edu.wpi.first.wpilibj.drive.DifferentialDrive.WheelSpeeds;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.RobotConstants;
 
-import frc.robot.subsystems.drivetrain.IO.DrivetrainIO_Real;
+import frc.robot.subsystems.drivetrain.IO.DrivetrainIO_REAL;
 import frc.robot.subsystems.drivetrain.IO.DrivetrainIO_SIM;
+import frc.robot.subsystems.vision.Vision;
 
 public class Drivetrain extends SubsystemBase {
   /** Creates a new Drivetrain. */
   DifferentialDriveKinematics kinematics;
   DrivetrainIO io;
   driveDataAutoLogged data;
+  Vision vision;
   public Drivetrain() {
     kinematics = new DifferentialDriveKinematics(0.5);
     data = new driveDataAutoLogged();
     switch (RobotConstants.currentStatus) {
       case REAL:
-        io = new DrivetrainIO_Real();
+        io = new DrivetrainIO_REAL();
         break;
       case SIM:
         io = new DrivetrainIO_SIM();
         break;
     }
+    // this.vision = vision;
+  }
+
+  public Drivetrain(Vision vision) {
+    kinematics = new DifferentialDriveKinematics(0.5);
+    data = new driveDataAutoLogged();
+    switch (RobotConstants.currentStatus) {
+      case REAL:
+        io = new DrivetrainIO_REAL(vision);
+        break;
+      case SIM:
+        io = new DrivetrainIO_SIM();
+        break;
+    }
+    this.vision = vision;
   }
 
   public void DriveBasedOnSpeeds(ChassisSpeeds speeds) {
@@ -41,6 +60,12 @@ public class Drivetrain extends SubsystemBase {
     Logger.recordOutput("Drive Train/Speeds", wheelSpeeds);
   }
 
+  public void driveJoysticks(double steer, double drive) {
+    WheelSpeeds speeds = DifferentialDrive.arcadeDriveIK(drive, steer, false);
+    io.driveWheelSpeeds(new DifferentialDriveWheelSpeeds(speeds.left * RobotConstants.RobotMaxSpeed, speeds.right * RobotConstants.RobotMaxSpeed));
+  }
+
+  
   @Override
   public void periodic() {
     io.updateInputs(data);

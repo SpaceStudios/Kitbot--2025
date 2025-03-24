@@ -6,6 +6,7 @@ package frc.robot.subsystems.drivetrain.commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.Constants.RobotConstants;
@@ -28,14 +29,25 @@ public class Drive extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    ChassisSpeeds setSpeeds = new ChassisSpeeds(Joystick1Y.getAsDouble()*RobotConstants.RobotMaxSpeed, 0.0, Joystick2X.getAsDouble()*Math.PI);
+    double xSpeed = Joystick1Y.getAsDouble();
+    double zRotate = Joystick2X.getAsDouble();
+
+    xSpeed = MathUtil.applyDeadband(xSpeed, 0.1);
+    zRotate = MathUtil.applyDeadband(zRotate, 0.1);
+
+    if (xSpeed > 0) xSpeed -= 0.1;
+    if (xSpeed < 0) xSpeed += 0.1;
+    if (zRotate > 0) zRotate -= 0.1;
+    if (zRotate < 0) zRotate += 0.1;
+
+    ChassisSpeeds setSpeeds = new ChassisSpeeds(xSpeed * RobotConstants.RobotMaxSpeed, 0.0, zRotate * Math.PI);
     drivetrain.DriveBasedOnSpeeds(setSpeeds);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-
+    
   }
 
   // Returns true when the command should end.

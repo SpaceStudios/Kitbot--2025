@@ -20,7 +20,7 @@ public class Constants {
     public static class RobotConstants {
         public static RobotStatus currentStatus = RobotStatus.SIM;
         public static final double RobotMaxSpeed = 5; // Robot Max Speed in M/S
-        public static final double RobotMaxTurnSpeed = Units.degreesToRadians(360); // Robot Max Turn Speed in Degrees
+        public static final double RobotMaxTurnSpeed = Units.degreesToRadians(360*100); // Robot Max Turn Speed in Degrees
     }
 
     public static class InternalEnums {
