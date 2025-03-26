@@ -2,47 +2,41 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.tower.commands;
+package frc.robot.subsystems.led.commands;
 
-import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.util.Color;
+import java.util.logging.Logger;
+
+import edu.wpi.first.wpilibj.AddressableLEDBuffer;
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.led.LED;
-import frc.robot.subsystems.tower.Tower;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class setVolts extends Command {
-  /** Creates a new setVolts. */
-  Tower tower;
-  double volts;
+public class IncrementLight extends Command {
+  /** Creates a new IncrementLight. */
   LED led;
-  public setVolts(double cVolts, Tower cTower, LED led) {
+  public IncrementLight(LED led) {
     // Use addRequirements() here to declare subsystem dependencies.
-    tower = cTower;
-    volts = cVolts;
     this.led = led;
   }
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    led.length++;
+    led.ledBuffer = new AddressableLEDBuffer(led.length);
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
-  public void execute() {
-    tower.setVolts(volts);
-    led.setColor(Color.kGreen);
-  }
+  public void execute() {}
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    tower.setVolts(0.0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
   public boolean isFinished() {
-    return false;
+    return true;
   }
 }

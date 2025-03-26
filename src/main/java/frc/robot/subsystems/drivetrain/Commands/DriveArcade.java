@@ -2,25 +2,25 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.subsystems.tower.commands;
+package frc.robot.subsystems.drivetrain.commands;
 
-import edu.wpi.first.wpilibj.LEDPattern;
-import edu.wpi.first.wpilibj.util.Color;
+import java.util.function.DoubleSupplier;
+
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.led.LED;
-import frc.robot.subsystems.tower.Tower;
+import frc.robot.subsystems.drivetrain.Drivetrain;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class setVolts extends Command {
-  /** Creates a new setVolts. */
-  Tower tower;
-  double volts;
-  LED led;
-  public setVolts(double cVolts, Tower cTower, LED led) {
+public class DriveArcade extends Command {
+  /** Creates a new DriveArcade. */
+  DoubleSupplier drive;
+  DoubleSupplier steer;
+  Drivetrain drivetrain;
+  public DriveArcade(DoubleSupplier drive, DoubleSupplier steer, Drivetrain drivetrain) {
     // Use addRequirements() here to declare subsystem dependencies.
-    tower = cTower;
-    volts = cVolts;
-    this.led = led;
+    addRequirements(drivetrain);
+    this.drivetrain = drivetrain;
+    this.drive = drive;
+    this.steer = steer;
   }
 
   // Called when the command is initially scheduled.
@@ -30,14 +30,13 @@ public class setVolts extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    tower.setVolts(volts);
-    led.setColor(Color.kGreen);
+    drivetrain.driveJoysticks(steer.getAsDouble(), drive.getAsDouble());
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    tower.setVolts(0.0);
+    drivetrain.driveJoysticks(0, 0);
   }
 
   // Returns true when the command should end.
